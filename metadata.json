@@ -1,0 +1,6 @@
+{
+  "name": "Xưởng Hình Học 5",
+  "description": "Ứng dụng vẽ hình, khám phá và giải toán hình học lớp 5 dành cho học sinh tiểu học Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

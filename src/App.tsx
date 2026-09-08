@@ -5,6 +5,7 @@ import {
   CanvasDisplayOptions,
   UserStats,
   Exercise,
+  AppTab,
 } from './types';
 import { DrawingCanvas } from './components/DrawingCanvas';
 import { GeometryToolbar } from './components/GeometryToolbar';
@@ -17,6 +18,7 @@ import { GuidedSolvePanel } from './components/GuidedSolvePanel';
 import { ChallengePanel } from './components/ChallengePanel';
 import { FormulaBook } from './components/FormulaBook';
 import { TeacherModeModal } from './components/TeacherModeModal';
+import { AiProblemSolver } from './components/AiProblemSolver';
 import { runMandatoryTests } from './utils/mathUtils';
 import {
   Compass,
@@ -36,6 +38,7 @@ import {
   Trophy,
   Tv,
   Check,
+  Upload,
 } from 'lucide-react';
 
 const LOCAL_STORAGE_STATS_KEY = 'xuong_hinh_hoc_5_stats';
@@ -54,9 +57,7 @@ const DEFAULT_SHAPE: ShapeData = {
 
 export default function App() {
   // Active Navigation Tab
-  const [activeTab, setActiveTab] = useState<
-    'draw' | 'explore' | 'calculate' | 'practice' | 'challenge' | 'handbook'
-  >('draw');
+  const [activeTab, setActiveTab] = useState<AppTab>('draw');
 
   // Canvas and Shape state
   const [shape, setShape] = useState<ShapeData>(DEFAULT_SHAPE);
@@ -235,16 +236,17 @@ export default function App() {
           </div>
         </div>
 
-        {/* 2. NAVIGATION TABS BAR (MỤC III & IV) */}
+        {/* 2. NAVIGATION TABS BAR */}
         <div className="bg-slate-50/80 border-t border-slate-200/70 overflow-x-auto">
           <div className="max-w-7xl mx-auto px-3 sm:px-6 flex gap-1 sm:gap-2 py-1.5">
             {[
               { id: 'draw', label: '1. VẼ HÌNH', icon: <PenTool className="w-4 h-4" /> },
-              { id: 'explore', label: '2. KHÁM PHÁ', icon: <Sparkles className="w-4 h-4" /> },
-              { id: 'calculate', label: '3. TÍNH TOÁN & ĐỔI ĐƠN VỊ', icon: <Calculator className="w-4 h-4" /> },
-              { id: 'practice', label: '4. LUYỆN TẬP', icon: <BookOpen className="w-4 h-4" /> },
-              { id: 'challenge', label: '5. THỬ THÁCH', icon: <Trophy className="w-4 h-4" /> },
-              { id: 'handbook', label: '6. SỔ TAY CÔNG THỨC', icon: <Layers className="w-4 h-4" /> },
+              { id: 'ai_solve', label: '2. TẢI ĐỀ & GIẢI TOÁN AI', icon: <Sparkles className="w-4 h-4 text-amber-500" /> },
+              { id: 'explore', label: '3. KHÁM PHÁ', icon: <Compass className="w-4 h-4" /> },
+              { id: 'calculate', label: '4. TÍNH TOÁN & ĐỔI ĐƠN VỊ', icon: <Calculator className="w-4 h-4" /> },
+              { id: 'practice', label: '5. LUYỆN TẬP', icon: <BookOpen className="w-4 h-4" /> },
+              { id: 'challenge', label: '6. THỬ THÁCH', icon: <Trophy className="w-4 h-4" /> },
+              { id: 'handbook', label: '7. SỔ TAY CÔNG THỨC', icon: <Layers className="w-4 h-4" /> },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -352,6 +354,16 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  onClick={() => setActiveTab('ai_solve')}
+                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                  title="Tải ảnh, PDF, Word hoặc dán đề bài để AI vẽ hình và giải"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Tải đề / ảnh giải AI</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => handleSelectShapeType(shape.type)}
                   className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition flex items-center gap-1"
                   title="Đặt lại vị trí hình"
@@ -386,6 +398,27 @@ export default function App() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* ================= TAB 2: TẢI ĐỀ & GIẢI TOÁN AI ================= */}
+        {activeTab === 'ai_solve' && (
+          <AiProblemSolver
+            onLoadShapeToStudio={(shapeData) => {
+              if (shapeData.type) {
+                handleSelectShapeType(shapeData.type);
+              }
+              setShape((prev) => ({
+                ...prev,
+                ...shapeData,
+                points: [],
+              }));
+              setActiveTab('draw');
+            }}
+            onLoadToPractice={(customEx) => {
+              handleOpenExerciseInStudio(customEx);
+              setActiveTab('practice');
+            }}
+          />
         )}
 
         {/* ================= TAB 2: KHÁM PHÁ ================= */}

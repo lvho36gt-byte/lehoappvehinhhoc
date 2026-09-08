@@ -113,4 +113,39 @@ export interface Badge {
   unlocked: boolean;
 }
 
-export type AppTab = 'draw' | 'explore' | 'calculate' | 'practice' | 'challenge' | 'handbook';
+export interface ExtractedProblem {
+  id: string;
+  title: string;
+  originalPrompt: string;
+  shapeType: ShapeType;
+  shapeParams: {
+    unit: LengthUnit;
+    length?: number;
+    width?: number;
+    side?: number;
+    baseA?: number;
+    baseB?: number;
+    height?: number;
+    radius?: number;
+    diameter?: number;
+    diagonal1?: number;
+    diagonal2?: number;
+    showAltitude?: boolean;
+  };
+  summary: {
+    given: string[];
+    target: string;
+  };
+  solutionSteps: {
+    stepNumber: number;
+    title: string;
+    formulaExplanation?: string;
+    calculation: string;
+    resultNote?: string;
+  }[];
+  finalAnswer: string;
+  targetQuestionType?: string;
+  pedagogicalNote?: string;
+}
+
+export type AppTab = 'draw' | 'ai_solve' | 'explore' | 'calculate' | 'practice' | 'challenge' | 'handbook';
